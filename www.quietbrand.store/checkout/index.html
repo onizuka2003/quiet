@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout Quiet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f7f7;
+        --surface: #ffffff;
+        --text: #0e0e0e;
+        --muted: #9a9a9a;
+        --accent: #111111;
+        --accent-light: #f0f0f0;
+        --border: #e2e2e2;
+        --radius: 16px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont,
+          'Segoe UI', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        background: #000;
+        color: #fff;
+        padding: 28px clamp(24px, 8vw, 80px) 36px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .header__brand {
+        font-weight: 700;
+        font-size: 1.9rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .steps {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(12px, 4vw, 64px);
+        margin-top: 24px;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.64);
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+      }
+
+      .step--done {
+        color: #fff;
+      }
+
+      .step span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        font-size: 0.85rem;
+      }
+
+      .step--done span {
+        background: #fff;
+        color: #000;
+      }
+
+      main {
+        flex: 1;
+        padding: clamp(24px, 6vw, 64px) clamp(16px, 8vw, 120px);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 2.2fr) minmax(280px, 1fr);
+        gap: clamp(24px, 4vw, 48px);
+        align-items: start;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: clamp(24px, 5vw, 40px);
+        box-shadow: 0 16px 32px rgba(15, 15, 15, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      h2 {
+        margin: 0 0 18px;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
+      h3 {
+        margin: 32px 0 16px;
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .input-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      input,
+      select {
+        height: 52px;
+        padding: 0 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--accent-light);
+        font-size: 1rem;
+        font-weight: 500;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #000;
+        box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .delivery-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        border: 2px solid #000;
+        border-radius: 16px;
+        background: #fff;
+        font-weight: 600;
+      }
+
+      .delivery-option span:last-child {
+        font-weight: 700;
+      }
+
+      .summary {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .product-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .product-thumb {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        background: #f1f1f1;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+      }
+
+      .product-info {
+        flex: 1;
+        font-size: 0.95rem;
+      }
+
+      .price {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      .summary-divider {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 0;
+      }
+
+      .summary-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.95rem;
+      }
+
+      .summary-total {
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .apply-button,
+      .checkout-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 16px 22px;
+        border-radius: 999px;
+        border: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .apply-button {
+        background: #000;
+        color: #fff;
+        width: 100%;
+      }
+
+      .checkout-button {
+        background: #000;
+        color: #fff;
+        margin-top: 16px;
+        width: 100%;
+      }
+
+      .checkout-button:hover,
+      .apply-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+      }
+
+      footer {
+        padding: 24px;
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .continue-button {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .continue-button button {
+        padding: 18px 46px;
+        background: #000;
+        color: #fff;
+        border-radius: 999px;
+        border: none;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .continue-button button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 24px rgba(0, 0, 0, 0.2);
+      }
+
+      @media (max-width: 960px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          padding: 24px 20px 32px;
+        }
+
+        main {
+          padding: 32px 20px 64px;
+        }
+
+        .steps {
+          flex-wrap: wrap;
+        }
+
+        .card {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header__brand">Quiet</div>
+      <nav class="steps">
+        <div class="step step--done"><span>1</span> Carro</div>
+        <div class="step step--done"><span>2</span> Entrega</div>
+        <div class="step"><span>3</span> Pago</div>
+      </nav>
+    </header>
+
+    <main>
+      <div class="layout">
+        <section class="card">
+          <h2>Datos de contacto</h2>
+          <div class="input-grid">
+            <label>
+              Correo
+              <input type="email" placeholder="quiet@gmail.com" />
+            </label>
+            <label>
+              Teléfono
+              <input type="tel" placeholder="1234567890" />
+            </label>
+          </div>
+
+          <h3>Entrega</h3>
+          <div class="delivery-option">
+            <div>
+              <div>Envio nacional</div>
+              <small style="color: var(--muted); font-weight: 500">3-5 días hábiles</small>
+            </div>
+            <span>COP$15.000</span>
+          </div>
+
+          <h3>Datos del destinatario</h3>
+          <div class="input-grid">
+            <label>
+              Nombre
+              <input type="text" placeholder="QUIET" />
+            </label>
+            <label>
+              Apellidos
+              <input type="text" placeholder="CO." />
+            </label>
+            <label>
+              Documento
+              <input type="text" placeholder="CC" />
+            </label>
+            <label>
+              Número de documento
+              <input type="text" placeholder="1010101010" />
+            </label>
+            <label>
+              Correo electrónico
+              <input type="email" placeholder="quietbrand@gmail.com" />
+            </label>
+            <label>
+              Teléfono
+              <input type="tel" placeholder="3001234567" />
+            </label>
+            <label>
+              Dirección
+              <input type="text" placeholder="Calle 123 #45-67" />
+            </label>
+            <label>
+              Número interior
+              <input type="text" placeholder="Apto 302" />
+            </label>
+            <label>
+              Barrio
+              <input type="text" placeholder="Chico" />
+            </label>
+            <label>
+              Ciudad
+              <input type="text" placeholder="Bogotá" />
+            </label>
+            <label>
+              Departamento
+              <select>
+                <option selected>Cundinamarca</option>
+                <option>Antioquia</option>
+                <option>Valle del Cauca</option>
+              </select>
+            </label>
+          </div>
+
+          <h3>Datos de facturación</h3>
+          <div class="input-grid">
+            <label>
+              Nombre o Razón social
+              <input type="text" placeholder="Quiet S.A.S" />
+            </label>
+            <label>
+              NIT
+              <input type="text" placeholder="900000000" />
+            </label>
+            <label>
+              Dirección de facturación
+              <input type="text" placeholder="Cra 12 #34-56" />
+            </label>
+            <label>
+              Ciudad
+              <input type="text" placeholder="Bogotá" />
+            </label>
+          </div>
+        </section>
+
+        <aside class="card summary">
+          <div class="product-item">
+            <div class="product-thumb">T-SHIRT</div>
+            <div class="product-info">
+              <div>THE QUIET LIFE T-SHIRT</div>
+              <div style="color: var(--muted); font-size: 0.85rem">Talla M</div>
+            </div>
+            <div class="price">COP$95.000</div>
+          </div>
+
+          <button class="apply-button">Aplicar cupón</button>
+
+          <hr class="summary-divider" />
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>COP$95.000</span>
+          </div>
+          <div class="summary-row">
+            <span>Envío</span>
+            <span>COP$15.000</span>
+          </div>
+          <div class="summary-row summary-total">
+            <span>Total</span>
+            <span>COP$110.000</span>
+          </div>
+
+          <button class="checkout-button">Pagar</button>
+        </aside>
+      </div>
+
+      <div class="continue-button">
+        <button>Continuar pedido</button>
+      </div>
+    </main>
+
+    <footer>© Quiet 2024</footer>
+  </body>
+</html>
