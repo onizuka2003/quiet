@@ -81,7 +81,23 @@
       background:transparent;
     }
     .toggle-eye{
-      background:transparent; border:0; cursor:pointer; padding:6px; opacity:.7;
+      
+  position:absolute;
+  top:50%;
+  right:12px;
+  transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  padding:0;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+}
+.toggle-eye img{width:5px; height:20px; display:block;}
+
     }
     .hint{display:flex; justify-content:flex-end; font-size:12px; color:var(--muted); margin-top:6px}
     .hint a{color:var(--text); text-decoration:none; border-bottom:1px dotted var(--muted)}
@@ -132,7 +148,7 @@
     <div class="container topbar-inner">
       <div class="logo">
         <span class="logo-mark">
-          <img src="../imagenes pagina/logo-1069215491-1750714996-dfd41da1eb6c985d433a6fb66698a4701750714996-640-0.png" alt="Logo" width="20" height="20" />
+          <img src="../imagenes pagina/logo-1069215491-1750714996-dfd41da1eb6c985d433a6fb66698a4701750714996-640-0.png" alt="Logo" width="50" height="65" />
         </span> QUIET
       </div>
 
@@ -183,7 +199,7 @@
           <label class="label" for="password">Contraseña</label>
           <div class="control">
             <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" minlength="3" required />
-            <button type="button" class="toggle-eye" aria-label="Mostrar u ocultar contraseña" title="Mostrar/ocultar">
+            <button type="button" class="toggle-eye" aria-label="Mostrar u ocultar contraseña" title="Mostrar/ocultar" > <img src="eye.png" alt="3">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
             </button>
           </div>
