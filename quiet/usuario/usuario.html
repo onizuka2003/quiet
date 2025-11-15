@@ -12,6 +12,128 @@
     .hidden {
   display: none;
 }
+/* placeholder gris hasta que elijan algo */
+#packagingType:invalid { color:#777; }
+#packagingType option { color:#111; }
+
+/* Panel colapsable */
+.packaging-designs {
+  margin-top: 12px;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+
+  /* estado cerrado */
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .35s ease, opacity .25s ease, transform .25s ease;
+}
+
+/* estado abierto */
+.packaging-designs.open {
+  /* Ajusta este máximo al alto que necesites */
+  max-height: 560px;
+  opacity: 1;
+  transform: none;
+}
+
+/* Contenido interno del panel */
+.design-row {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  overflow-x: auto;       /* si no caben, se hace scroll horizontal */
+}
+
+/* Cada caja */
+.design-item {
+  position: relative;
+  flex: 0 0 180px;
+  cursor: pointer;
+}
+
+.design-item img {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+}
+
+/* “check” arriba a la derecha */
+.design-item input[type="radio"] {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: #000;
+  background: #fff;
+}
+
+/* caja seleccionada resaltada */
+.design-item.selected img {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+.design-caption {
+  margin-top: 4px;
+  font-size: 12px;
+  text-align: center;
+  color: #555;
+}
+
+/* Recuadro blanco grande */
+.packaging-designs {
+  margin-top: 12px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+/* Fila de cajas */
+.design-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;      /* por si no caben todas en pantalla */
+  padding-bottom: 4px;
+}
+
+/* Cada caja */
+.design-item {
+  position: relative;
+  flex: 0 0 180px;       /* ancho aprox. como tu ejemplo */
+  cursor: pointer;
+}
+
+.design-item img {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+}
+
+/* El cuadrito de selección arriba a la derecha */  
+.design-item input[type="radio"] {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  accent-color: #000;    /* color del check */
+  background: #fff;
+}
+
+/* Caja seleccionada: se marca con borde */
+.design-item.selected img {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+    .hidden {
+  display: none;
+}
 
 .packaging-designs {
   margin-top: 16px;
@@ -495,63 +617,131 @@
         </div>
 
 
-        <h3>PERSONALIZACION DEL Empaque</h3>
-        <div class="custom-select">
-          <select>
-            <option value="" hidden>
-              Selecciona un tipo de empaque
-            </option>
+       <h3>Personalización del empaque</h3>
 
-            <option>Basico $0</option>
-            <option>Premium $30.000</option>
-          </select>
-        </div>
-        <div id="packaging-designs" class="packaging-designs hidden">
-  <p class="packaging-helper">Selecciona un diseño para este tipo de empaque:</p>
-
-  <!-- DISEÑOS PARA EMPAQUE BÁSICO -->
-  <div id="designs-basic" class="design-grid hidden">
-    <label class="design-card">
-      <input type="radio" name="packagingDesign" value="basic-classic">
-      <div class="design-content">
-        <img src="img/empaque-basic-1.jpg" alt="Bolsa Quiet clásica">
-        <h4>Bolsa Quiet clásica</h4>
-        <p>Bolsa blanca con logo Quiet negro al centro.</p>
-      </div>
-    </label>
-
-    <label class="design-card">
-      <input type="radio" name="packagingDesign" value="basic-logo-small">
-      <div class="design-content">
-        <img src="img/empaque-basic-2.jpg" alt="Bolsa con logo pequeño">
-        <h4>Logo discreto</h4>
-        <p>Bolsa blanca con logo pequeño en la esquina inferior.</p>
-      </div>
-    </label>
-  </div>
-
-  <!-- DISEÑOS PARA EMPAQUE PREMIUM -->
-  <div id="designs-premium" class="design-grid hidden">
-    <label class="design-card">
-      <input type="radio" name="packagingDesign" value="premium-black-box">
-      <div class="design-content">
-        <img src="img/empaque-premium-1.jpg" alt="Caja negra">
-        <h4>Caja negra clásica</h4>
-        <p>Caja rígida negra con logo Quiet en relieve.</p>
-      </div>
-    </label>
-
-    <label class="design-card">
-      <input type="radio" name="packagingDesign" value="premium-message">
-      <div class="design-content">
-        <img src="img/empaque-premium-2.jpg" alt="Caja con mensaje">
-        <h4>Mensaje personalizado</h4>
-        <p>Caja negra + tarjeta interna con mensaje del cliente.</p>
-      </div>
-    </label>
-  </div>
+<div class="custom-select">
+  <select id="packagingType" required>
+    <option value="" selected hidden>Selecciona un tipo de empaque</option>
+    <option value="basic" data-price="0">Empaque básico (Bolsa)$0</option>
+    <option value="premium" data-price="30000">Empaque Premium (Caja)$30.000</option>
+  </select>
 </div>
+
+<!-- Panel colapsable -->
+<div id="designRowContainer" class="packaging-designs" aria-hidden="true">
+  <div id="designRow" class="design-row"></div>
+</div>
+<script>
+  const PACKS = {
+    basic: {
+      price: 0,
+      designs: [
+        { id:"basic-1", name:"Bolsa Negra", img:"usuario\imagenes\empaque basico\negro.png"},
+        { id:"basic-2", name:"Bolsa Blanca", img:"usuario/imagenes/empaque basico/blanco.png" },
+      ]
+    },
+    premium: {
+      price: 30000,
+      designs: [
+        { id:"prem-1", name:"DBZ",          img:"usuario/imagenes/premiun/Captura de pantalla 2025-09-22 191020.png" },
+        { id:"prem-2", name:"Presidente",   img:"usuario/imagenes/premiun/Captura de pantalla 2025-09-22 185432.png" },
+        { id:"prem-3", name:"Quiet Black",  img:"usuario/imagenes/premiun/Captura de pantalla 2025-09-22 183344.png" },
+        { id:"prem-4", name:"Quiet White",  img:"usuario/imagenes/premiun/Captura de pantalla 2025-09-22 192711.png" },
+        { id:"prem-5", name:"Camo Quiet",   img:"usuario/imagenes/premiun/Captura de pantalla 2025-09-22 192044.png" },
+      ]
+    }
+  };
+
+  const packagingType      = document.getElementById('packagingType');
+  const designPanel        = document.getElementById('designRowContainer');
+  const designRow          = document.getElementById('designRow');
+
+  function renderDesigns(type) {
+    const cfg = PACKS[type];
+    if (!cfg) {
+      // cerrar panel si vuelven al placeholder
+      designRow.innerHTML = '';
+      designPanel.classList.remove('open');
+      designPanel.setAttribute('aria-hidden', 'true');
+      return;
+    }
+
+    // Pintar las cajitas
+    designRow.innerHTML = cfg.designs.map(d => `
+      <label class="design-item">
+        <input type="radio" name="packDesign" value="${d.id}">
+        <img src="${d.img}" alt="${d.name}">
+        <div class="design-caption">${d.name}</div>
+      </label>
+    `).join('');
+
+    // Abrir el panel suavemente en el siguiente frame
+    requestAnimationFrame(() => {
+      designPanel.classList.add('open');
+      designPanel.setAttribute('aria-hidden', 'false');
+      // si la card es larga, centramos el panel en vista
+      designPanel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    });
+  }
+
+  // Cambia el tipo de empaque
+  packagingType.addEventListener('change', e => {
+    renderDesigns(e.target.value);
+
+    // (Opcional) actualiza resumen si tienes estos IDs:
+    const packPrice = Number(e.target.selectedOptions[0]?.dataset.price || 0);
+    const elPackCost = document.getElementById('packaging-cost');
+    const elSubtotal = document.getElementById('subtotal');
+    const elTotal    = document.getElementById('total');
+
+    const parseNumber = t => Number(String(t||'').replace(/[^\d]/g,'') || 0);
+    const fmt = n => n.toLocaleString('es-CO');
+
+    if (elPackCost && elTotal) {
+      elPackCost.textContent = fmt(packPrice);
+      const base = elSubtotal ? parseNumber(elSubtotal.textContent) : 0;
+      elTotal.textContent = fmt(base + packPrice);
+    }
+  });
+
+  // Resaltar la caja seleccionada
+  designRow.addEventListener('change', e => {
+    if (e.target.name !== 'packDesign') return;
+    document.querySelectorAll('.design-item').forEach(i => i.classList.remove('selected'));
+    const card = e.target.closest('.design-item');
+    if (card) card.classList.add('selected');
+
+    // Aquí ya sabes exactamente qué diseño eligió:
+    // packagingType.value  -> basic | premium
+    // e.target.value       -> id del diseño (prem-1, etc.)
+  });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       </section>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -600,7 +790,7 @@
     </div>
   </main>
 
-  <footer>© Quiet 2024</footer>
+  <footer>© Quiet 2025</footer>
 </body>
 
 </html>

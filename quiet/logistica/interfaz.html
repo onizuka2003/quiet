@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Añadir diseño · Quiet</title>
+  <style>
+    :root{
+      --bg:#f7f7f8;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --text:#0f172a;
+      --brand:#111827;
+      --accent:#111827;
+      --ring:#11182733;
+      --ok:#059669;
+      --warn:#b45309;
+      --danger:#b91c1c;
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+    a{color:inherit}
+    .container{max-width:1200px;margin:0 auto;padding:24px}
+
+    /* Topbar */
+    .topbar{background:var(--brand);color:#fff;padding:14px 0}
+    .topbar-inner{max-width:1200px;margin:0 auto;display:flex;gap:16px;align-items:center;padding:0 24px}
+    .logo{width:28px;height:28px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:700}
+    .search{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:8px 14px;box-shadow:0 0 0 2px transparent}
+    .search input{border:0;outline:0;flex:1;font-size:14px}
+    .menu{display:flex;gap:20px;align-items:center}
+    .menu .item{opacity:.9;font-size:14px}
+
+    /* Layout */
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:24px}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr}}
+
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:0 1px 2px rgba(0,0,0,.05),0 0 0 1px #e5e7eb;padding:18px}
+    h1{font-size:36px;margin:18px 0 14px 0}
+    h2{font-size:18px;margin:0 0 12px 0}
+    .subtle{color:var(--muted);font-size:12px}
+
+    /* Upload widget */
+    .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .toolbar button{border:0;background:#eef2ff;color:#3730a3;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer}
+    .dropzone{border:2px dashed #d1d5db;border-radius:16px;min-height:140px;display:grid;place-items:center;color:var(--muted);text-align:center;padding:16px;transition:.2s box-shadow, .2s border-color;background:#fcfcfd}
+    .dropzone.drag{border-color:#111827;box-shadow:0 0 0 4px var(--ring)}
+    .dz-inner{display:grid;place-items:center;gap:8px}
+    .dz-icon{font-size:26px}
+    .dz-text{font-size:14px}
+    .dz-text small{display:block;color:#9ca3af}
+    .hidden{display:none !important}
+
+    /* Upload list */
+    .files{margin-top:14px;display:grid;gap:10px}
+    .file{display:flex;gap:12px;align-items:flex-start;border:1px solid #e5e7eb;border-radius:14px;padding:10px 12px}
+    .file .pdf{width:34px;height:44px;background:linear-gradient(180deg,#fecaca,#fee2e2);border:1px solid #fecaca;border-radius:6px;display:grid;place-items:center;font-weight:700;color:#991b1b}
+    .file h4{margin:0;font-size:14px}
+    .file .meta{font-size:12px;color:var(--muted)}
+    .file .actions{margin-left:auto;display:flex;gap:8px}
+    .btn{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer}
+    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.danger{border-color:#fecaca;color:#991b1b;background:#fff5f5}
+
+    /* Side panel */
+    .side .section + .section{margin-top:16px}
+
+    /* Diseños actuales */
+    .current{display:grid;gap:10px}
+    .radio-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+    .select-row{display:flex;gap:8px;align-items:center}
+    select{border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;min-width:200px}
+
+    .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+    @media (max-width: 1100px){.cards{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width: 720px){.cards{grid-template-columns:repeat(2,1fr)}}
+    .card-item{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:8px}
+    .thumb{aspect-ratio:4/3;background:#f3f4f6;border:1px dashed #e5e7eb;border-radius:10px;display:grid;place-items:center;overflow:hidden}
+    .thumb img{max-width:100%;max-height:100%;display:block}
+    .item-actions{display:flex;justify-content:center;gap:10px}
+    .icon-btn{border:0;background:#eef2ff;border-radius:999px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
+    .icon-btn.danger{background:#fff5f5;border:1px solid #fecaca}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:24px;z-index:40}
+    .modal.open{display:flex}
+    .modal .box{background:#fff;border-radius:14px;max-width:900px;width:100%;height:80vh;display:flex;flex-direction:column}
+    .modal header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #e5e7eb}
+    .modal iframe{flex:1;border:0;border-bottom-left-radius:14px;border-bottom-right-radius:14px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="logo" title="Quiet">x</div>
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#111827" stroke-width="1.8"/></svg>
+        <input placeholder="¿Qué estás buscando?" aria-label="Buscar" />
+      </div>
+      <div class="menu">
+        <div class="item">Ayuda</div>
+        <div class="item">Mi cuenta</div>
+        <div class="item">Notificaciones</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Añadir diseño</h1>
+    <div class="subtle">Tamaño máximo de archivo: 2 GB · Número máximo de archivos: 1 (solo PDF)</div>
+
+    <div class="grid" style="margin-top:16px">
+      <!-- Left: main column -->
+      <div class="col">
+        <div class="card">
+          <div class="toolbar" aria-label="Herramientas de carga">
+            <button type="button" id="btnFilePicker">Seleccionar archivo</button>
+            <button type="button" id="btnClear">Limpiar</button>
+          </div>
+          <div id="dropzone" class="dropzone" aria-label="Área para arrastrar y soltar">
+            <div class="dz-inner">
+              <div class="dz-icon">⬇️</div>
+              <div class="dz-text">
+                Puede arrastrar y soltar archivos aquí para añadirlos
+                <small>Solo se aceptan PDFs. También puede hacer clic en "Seleccionar archivo".</small>
+              </div>
+              <input id="fileInput" class="hidden" type="file" accept="application/pdf" />
+            </div>
+          </div>
+
+          <div id="uploadList" class="files" aria-live="polite"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h2>Diseños actuales</h2>
+          <div class="current">
+            <div class="radio-row" role="group" aria-label="Tipo de empaque">
+              <label><input type="radio" name="tipo" value="basico" checked /> Empaque básico (Bolsa)</label>
+              <label><input type="radio" name="tipo" value="premium" /> Empaque Premium (Caja)</label>
+            </div>
+            <div class="select-row">
+              <label for="selectorActuales" class="subtle" style="min-width:70px">Ver</label>
+              <select id="selectorActuales"></select>
+              <button class="btn" id="btnRefrescar">Refrescar</button>
+            </div>
+            <div class="cards" id="cardsActuales"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: side column -->
+      <aside class="side">
+        <div class="card section">
+          <h2>Parámetros del diseño</h2>
+          <p>
+            <span id="parametrosLink" style="text-decoration:underline;cursor:pointer">Parámetros de impresión (PDF)</span>
+          </p>
+          <div class="subtle">Haz clic en el texto para descargar un PDF con los parámetros de impresión actuales.</div>
+        </div>
+
+        <div class="card section">
+          <h2>Archivos subidos</h2>
+          <div id="listaSubidos" class="files"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal visor -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Visor de PDF">
+    <div class="box">
+      <header>
+        <strong id="modalTitle">Vista previa</strong>
+        <button class="btn" id="modalClose">Cerrar</button>
+      </header>
+      <iframe id="modalFrame"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // --- Utilidades ---
+    const fmtBytes = (bytes = 0) => {
+      const units = ['B','KB','MB','GB','TB'];
+      let i = 0; let n = Number(bytes);
+      while (n >= 1024 && i < units.length - 1) { n /= 1024; i++; }
+      return `${n.toFixed(i ? 1 : 0)} ${units[i]}`;
+    };
+    const nowISO = () => new Date().toISOString();
+
+    // --- Mock de base de datos de diseños actuales ---
+    const MOCK_ACTUALES = [
+      {id:'BOL-001', nombre:'Bolsa ST 14×20 · Negro', tipo:'Básico',  version:'1.3', fecha:'2025-09-12'},
+      {id:'BOL-002', nombre:'Bolsa Doypack 12×18 · Mate', tipo:'Básico',  version:'2.1', fecha:'2025-10-01'},
+      {id:'CAJ-101', nombre:'Caja premium 25×18×6 · Kraft', tipo:'Premium', version:'0.9', fecha:'2025-09-28'},
+      {id:'CAJ-102', nombre:'Caja premium 30×20×10 · Blanco', tipo:'Premium', version:'1.0', fecha:'2025-10-22'}
+    ];
+
+    // --- Persistencia local para "Archivos subidos" ---
+    const LS_KEY = 'quiet.uploads.v1';
+    const getUploads = () => JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+    const setUploads = (arr) => localStorage.setItem(LS_KEY, JSON.stringify(arr));
+
+    // --- Elementos ---
+    const dropzone       = document.getElementById('dropzone');
+    const fileInput      = document.getElementById('fileInput');
+    const uploadList     = document.getElementById('uploadList');
+    const listaSubidos   = document.getElementById('listaSubidos');
+    const btnPicker      = document.getElementById('btnFilePicker');
+    const btnClear       = document.getElementById('btnClear');
+
+    const selectorActuales = document.getElementById('selectorActuales');
+    const cardsActuales    = document.getElementById('cardsActuales');
+    const btnRefrescar     = document.getElementById('btnRefrescar');
+
+    const modal      = document.getElementById('modal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalFrame = document.getElementById('modalFrame');
+    const modalClose = document.getElementById('modalClose');
+
+    // --- Configuración ---
+    const MAX_FILES = 1;
+    const MAX_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
+
+    // --- Eventos de carga ---
+    const pickFile = () => fileInput.click();
+    btnPicker.addEventListener('click', pickFile);
+    btnClear.addEventListener('click', () => { uploadList.innerHTML = ''; fileInput.value = ''; });
+
+    // Drag & drop UX
+    ['dragenter','dragover'].forEach(ev => {
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('drag');
+      });
+    });
+    ['dragleave','drop'].forEach(ev => {
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('drag');
+      });
+    });
+    dropzone.addEventListener('drop',  (e) => handleFiles(e.dataTransfer.files));
+    dropzone.addEventListener('click', pickFile);
+    fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+    function handleFiles(fileList){
+      const files = Array.from(fileList || []);
+      if (!files.length) return;
+      if (files.length > MAX_FILES){
+        alert(`Solo se permite ${MAX_FILES} archivo.`);
+        return;
+      }
+      const f = files[0];
+      if (f.type !== 'application/pdf'){
+        alert('Solo se aceptan archivos PDF.');
+        return;
+      }
+      if (f.size > MAX_BYTES){
+        alert('El archivo excede el límite de 2 GB.');
+        return;
+      }
+      renderPending(f);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result; // base64
+        const entry = {
+          id: crypto.randomUUID(),
+          nombre:    f.name,
+          size:      f.size,
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          dataUrl
+        };
+        const all = getUploads();
+        all.unshift(entry);
+        setUploads(all);
+        renderUploads();
+        uploadList.innerHTML = '';
+      };
+      reader.readAsDataURL(f);
+    }
+
+    function renderPending(f){
+      uploadList.innerHTML = `
+        <div class="file">
+          <div class="pdf">PDF</div>
+          <div>
+            <h4>${f.name}</h4>
+            <div class="meta">Tamaño: ${fmtBytes(f.size)} · Preparando carga…</div>
+          </div>
+        </div>`;
+    }
+
+    function renderUploads(){
+      const items = getUploads();
+      if (!items.length){
+        listaSubidos.innerHTML = '<div class="subtle">Aún no has subido archivos.</div>';
+        return;
+      }
+      listaSubidos.innerHTML = items.map(item => (
+        `
+        <div class="file" data-id="${item.id}">
+          <div class="pdf">PDF</div>
+          <div>
+            <h4>${item.nombre}</h4>
+            <div class="meta">Última modificación: ${new Date(item.updatedAt).toLocaleString()} · Creado: ${new Date(item.createdAt).toLocaleString()} · Tamaño: ${fmtBytes(item.size)}</div>
+          </div>
+          <div class="actions">
+            <button class="btn" data-action="preview">Ver</button>
+            <button class="btn danger" data-action="delete">Eliminar</button>
+          </div>
+        </div>`
+      )).join('');
+    }
+
+    listaSubidos.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      const file = e.target.closest('.file');
+      const id   = file?.dataset.id;
+      if (!id) return;
+      const items = getUploads();
+      const entry = items.find(x => x.id === id);
+
+      if (btn.dataset.action === 'preview'){
+        modalTitle.textContent = entry.nombre;
+        modal.classList.add('open');
+        modalFrame.src = entry.dataUrl;
+      }
+      if (btn.dataset.action === 'delete'){
+        if (confirm('¿Eliminar este archivo?')){
+          setUploads(items.filter(x => x.id !== id));
+          renderUploads();
+        }
+      }
+    });
+
+    modalClose.addEventListener('click', () => {
+      modal.classList.remove('open');
+      modalFrame.src = 'about:blank';
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modalClose.click();
+    });
+
+    // --- Diseños actuales (mock de consulta a BD) ---
+    function cargarSelector(){
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      const opciones = [
+        {value:'todos',    label:'Todos'},
+        {value:'recientes',label:'Más recientes'}
+      ];
+      selectorActuales.innerHTML = opciones.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+      renderCards(tipo, selectorActuales.value);
+    }
+
+    function logoPlaceholder(text){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='225'>
+        <rect width='100%' height='100%' fill='#e5e7eb'/>
+        <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='20' fill='#111827' font-family='system-ui'>${text}</text>
+      </svg>`;
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    function renderCards(tipo, filtro){
+      let rows = MOCK_ACTUALES.filter(x => tipo === 'basico' ? x.tipo === 'Básico' : x.tipo === 'Premium');
+      if (filtro === 'recientes'){
+        rows = [...rows].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).slice(0,5);
+      }
+      if (!rows.length){
+        cardsActuales.innerHTML = '<div class="subtle">No hay diseños para mostrar.</div>';
+        return;
+      }
+      cardsActuales.innerHTML = rows.map(r => `
+        <div class='card-item' data-id='${r.id}'>
+          <div class='thumb'>
+            <img src='${logoPlaceholder(r.id)}' alt='Logo ${r.nombre}' title='Descargar instrucciones (PDF)' data-action='download-instrucciones'/>
+          </div>
+          <div class='item-actions'>
+            <button class='icon-btn' title='Descargar instrucciones' data-action='download-instrucciones'>👁️</button>
+            <button class='icon-btn' title='Descargar planos' data-action='download-planos'>📄</button>
+            <button class='icon-btn danger' title='Quitar del sistema' data-action='remove'>✖</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.querySelectorAll('input[name="tipo"]').forEach(r => r.addEventListener('change', cargarSelector));
+    selectorActuales.addEventListener('change', () => {
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      renderCards(tipo, selectorActuales.value);
+    });
+    btnRefrescar.addEventListener('click', cargarSelector);
+
+    // Acciones sobre tarjetas
+    cardsActuales.addEventListener('click', (e) => {
+      const el   = e.target;
+      const card = el.closest('.card-item');
+      if (!card) return;
+      const id   = card.dataset.id;
+      const item = MOCK_ACTUALES.find(x => x.id === id);
+      const action = el.dataset.action;
+      if (!action) return;
+
+      if (action === 'remove'){
+        card.remove();
+        return;
+      }
+      if (action === 'download-instrucciones'){
+        const blob = buildPdf(
+          `Instrucciones – ${item.nombre}`,
+          [
+            `ID: ${item.id}`,
+            `Tipo: ${item.tipo}`,
+            `Versión: ${item.version}`,
+            `Fecha: ${item.fecha}`,
+            '',
+            'Este PDF contiene las instrucciones del documento/empaque.'
+          ]
+        );
+        triggerDownload(blob, `${item.id}-instrucciones.pdf`);
+      }
+      if (action === 'download-planos'){
+        const blob = buildPdf(
+          `Planos – ${item.nombre}`,
+          [
+            `ID: ${item.id}`,
+            `Tipo: ${item.tipo}`,
+            'Planos técnicos (placeholder).'
+          ]
+        );
+        triggerDownload(blob, `${item.id}-planos.pdf`);
+      }
+    });
+
+    // --- Inicialización ---
+    renderUploads();
+    cargarSelector();
+
+    // --- Generación simple de "PDF" de texto y descarga ---
+    function buildPdf(title, lines){
+      const content = [title, '', ...lines].join('\n');
+      // No es un PDF complejo, pero se descarga con extensión .pdf y se puede abrir como texto.
+      return new Blob([content], {type:'application/pdf'});
+    }
+
+    function triggerDownload(blob, filename){
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // Link de parámetros de impresión
+    document.getElementById('parametrosLink').addEventListener('click', () => {
+      const blob = buildPdf('Parámetros de impresión', [
+        '• Material: Cartulina SBS 18pt',
+        '• Tintas: CMYK + Barniz UV',
+        '• Sangrado: 3 mm',
+        '• Resolución: 300 ppp',
+        '• Troquel: incluido',
+        '• Observaciones: Archivo en PDF/X-1a'
+      ]);
+      triggerDownload(blob, 'parametros-impresion.pdf');
+    });
+  </script>
+</body>
+</html>
