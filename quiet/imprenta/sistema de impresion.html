@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pedidos - Quiet</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background-color: #f7f7f7;
+      color: #111;
+    }
+
+    /* ========= TOP BAR ========= */
+  :root{
+    /* Colores base que usa la topbar */
+    --bg:#f7f7f8;
+    --text:#0f172a;
+    --brand:#000000;
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+  }
+
+  /* Contenedor general opcional (si quieres centrar contenido igual en todas las páginas) */
+  .container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:24px;
+  }
+
+  /* Topbar */
+  .topbar{
+    background:var(--brand);
+    color:#fff;
+    padding:14px 0;
+  }
+
+  .topbar-inner{
+    max-width:1200px;
+    margin:0 auto;
+    display:flex;
+    gap:16px;
+    align-items:center;
+    padding:0 24px;
+  }
+
+  /* Logo */
+  .logo{
+    width:40px;
+    height:40px;
+    display:grid;
+    place-items:center;
+    font-weight:700;
+    align-self:center;
+  }
+  .logo img{
+    max-height:100%;
+    width:auto;
+    display:block;
+    transform:translateY(-4px);
+  }
+
+  /* Buscador */
+  .search{
+    flex:1;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    border-radius:999px;
+    padding:8px 14px;
+    box-shadow:0 0 0 2px transparent;
+  }
+  .search input{
+    border:0;
+    outline:0;
+    flex:1;
+    font-size:14px;
+  }
+
+  /* Menú derecho */
+  .menu{
+    display:flex;
+    gap:20px;
+    align-items:center;
+  }
+  .menu .item{
+    opacity:.9;
+    font-size:14px;
+    cursor:pointer;
+  }
+.status-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+/* ya los tenías, solo para que veas cómo quedan */
+.status-completed {
+  background: #3ad43a;
+}
+.status-pending {
+  background: #ff0c0c;
+}
+
+/* Para marcar cuál de los dos está activo */
+.status-pill.active {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+  opacity: 1;
+}
+.status-pill:not(.active) {
+  opacity: 0.4;
+}
+
+
+
+    /* ========= LAYOUT ========= */
+
+    .page {
+      max-width: 1100px;
+      margin: 40px auto 80px;
+      padding: 0 24px;
+    }
+
+    h1,
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    /* ========= PEDIDOS ========= */
+
+    .orders-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .orders-search {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border-radius: 999px;
+      padding: 4px 12px;
+      border: 1px solid #ddd;
+      width: 260px;
+      gap: 6px;
+    }
+
+    .orders-search input {
+      border: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+    }
+
+    .orders-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .orders-filter-btn span.icon {
+      font-size: 18px;
+    }
+
+    .orders-list {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+
+    .orders-list-header {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #666;
+      border-bottom: 1px solid #eee;
+    }
+
+    .orders-list-header span:last-child {
+      text-align: right;
+    }
+
+    .order-card {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      padding: 14px 18px;
+      align-items: center;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .order-left {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .order-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 8px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 10px;
+      text-align: center;
+      padding: 6px;
+    }
+
+    .order-info {
+      font-size: 13px;
+    }
+
+    .order-info .product {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .order-info .code {
+      color: #777;
+      margin-bottom: 4px;
+    }
+
+    .order-info a {
+      display: block;
+      font-size: 13px;
+      color: #0082ff;
+      text-decoration: none;
+    }
+
+    .order-info a + a {
+      margin-top: 2px;
+    }
+
+    .order-right {
+      text-align: right;
+      font-size: 13px;
+    }
+
+    .order-right .date-label {
+      color: #777;
+      font-size: 12px;
+    }
+
+    .order-right .date-value {
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      margin-left: 4px;
+    }
+
+    .status-completed {
+      background: #3ad43a;
+    }
+
+    .status-pending {
+      background: #ff4343;
+    }
+
+    .pagination {
+      display: inline-flex;
+      border: 2px solid #007bff;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 18px 0 4px;
+    }
+
+    .pagination button {
+      border: none;
+      background: #fff;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      min-width: 40px;
+    }
+
+    .pagination button.active {
+      border-bottom: 2px solid #007bff;
+      font-weight: 600;
+    }
+
+    .pagination button:not(:last-child) {
+      border-right: 1px solid #e3e3e3;
+    }
+
+    /* ========= HISTORIAL ========= */
+
+    .history-section {
+      margin-top: 50px;
+    }
+
+    .table-wrapper {
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      text-align: center;
+    }
+
+    tbody td {
+      padding: 8px 10px;
+      border: 1px solid #eee;
+      text-align: center;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    @media (max-width: 800px) {
+      .order-card,
+      .orders-list-header {
+        grid-template-columns: 1fr;
+        text-align: left;
+      }
+
+      .order-right {
+        margin-top: 8px;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <!-- LOGO -->
+      <div class="logo" title="Quiet">
+        <!-- Cambia la ruta del src según tu estructura de carpetas -->
+        <img src="../imagenes pagina/logo-1069215491-1750714996-dfd41da1eb6c985d433a6fb66698a4701750714996-640-0.png" 
+             alt="Logo Quiet" width="40" height="50" />
+      </div>
+
+      <!-- BUSCADOR -->
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" 
+                stroke="#111827" stroke-width="1.8"/>
+        </svg>
+        <input placeholder="¿Qué estás buscando?" aria-label="Buscar" />
+      </div>
+
+      <!-- MENÚ DERECHO -->
+      <div class="menu">
+        <div class="item">Ayuda</div>
+        <div class="item">Mi cuenta</div>
+        <div class="item">Notificaciones</div>
+      </div>
+    </div>
+  </div>
+
+  <main class="page">
+    <!-- ========== PEDIDOS ========== -->
+    <section>
+      <h1>Pedidos</h1>
+
+      <div class="orders-header">
+        <div class="orders-search">
+          <input
+            type="text"
+            id="ordersSearch"
+            placeholder="Buscar"
+          />
+          <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="#000000" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.3 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="m18,10c0-4.41-3.59-8-8-8S2,5.59,2,10s3.59,8,8,8c1.85,0,3.54-.63,4.9-1.69l5.1,5.1,1.41-1.41-5.1-5.1c1.05-1.36,1.69-3.05,1.69-4.9Zm-14,0c0-3.31,2.69-6,6-6s6,2.69,6,6-2.69,6-6,6-6-2.69-6-6Z"></path>
+</svg></span>
+        </div>
+
+        <button class="orders-filter-btn">
+          <span class="icon">⚙</span>
+          <span>Filtrar</span>
+        </button>
+      </div>
+
+      <div class="orders-list">
+        <div class="orders-list-header">
+          <span>Fecha pedido D/MM/AA</span>
+          <span>Fecha entrega D/MM/AA &nbsp;&nbsp;&nbsp; Estado</span>
+        </div>
+        <div id="ordersList"></div>
+      </div>
+
+      <div class="pagination">
+        <button class="active">1</button>
+        <button>2</button>
+        <button>&gt;</button>
+      </div>
+    </section>
+
+    <!-- ========== HISTORIAL ========== -->
+    <section class="history-section">
+      <h2>Historial</h2>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Código</th>
+              <th rowspan="2">Cantidad</th>
+              <th rowspan="2">Diseño</th>
+              <th colspan="4">Pedidos</th>
+            </tr>
+            <tr>
+              <th>Factura</th>
+              <th>Fecha de entrada</th>
+              <th>Fecha de salida</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ================== DATOS DE EJEMPLO ==================
+    const orders = [];
+
+    function addOrder(order) {
+      // Cualquier "pedido nuevo" debería pasar por aquí.
+      orders.push(order);
+      renderOrders();
+      renderHistory();
+    }
+
+   function renderOrders() {
+  const list = document.getElementById("ordersList");
+  const searchText = document
+    .getElementById("ordersSearch")
+    .value.toLowerCase();
+
+  list.innerHTML = "";
+
+  orders.forEach((order, index) => {
+    // filtro por texto
+    if (
+      searchText &&
+      !order.product.toLowerCase().includes(searchText) &&
+      !order.code.toLowerCase().includes(searchText) &&
+      !order.design.toLowerCase().includes(searchText)
+    ) {
+      return; // si no coincide, no lo pinto
+    }
+    const article = document.createElement("article");
+    article.className = "order-card";
+
+    const isCompleted = order.status === "Terminado";
+
+    article.innerHTML = `
+      <div class="order-left">
+        <div class="order-image">
+          <span>${order.shortName || "Producto"}</span>
+        </div>
+        <div class="order-info">
+          <p class="product">${order.product}</p>
+          <p class="code">Código ${order.code}</p>
+          <a href="${order.invoiceUrl || "#"}" target="_blank">Factura</a>
+          <a href="${order.boxUrl || "./caja/blanco.pdf"}" target="_blank">${order.design}</a>
+        </div>
+      </div>
+      <div class="order-right">
+        <div class="date-label">Fecha entrega</div>
+        <div class="date-value">${order.deliveryDate}</div>
+        <div class="status-toggle">
+          <button
+            class="status-pill status-completed status-btn ${
+              isCompleted ? "active" : ""
+            }"
+            data-index="${index}"
+            data-status="Terminado"
+          >
+            Terminado
+          </button>
+          <button
+            class="status-pill status-pending status-btn ${
+              !isCompleted ? "active" : ""
+            }"
+            data-index="${index}"
+            data-status="Pendiente"
+          >
+            Pendiente
+          </button>
+        </div>
+      </div>
+    `;
+
+    list.appendChild(article);
+  });
+}
+
+    function renderHistory() {
+      const tbody = document.getElementById("historyBody");
+      tbody.innerHTML = "";
+
+      orders.forEach((order) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${order.code}</td>
+          <td>${order.quantity}</td>
+          <td>${order.design}</td>
+          <td>${order.invoiceNumber}</td>
+          <td>${order.orderDate}</td>
+          <td>${order.deliveryDate}</td>
+          <td>${order.status}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Demo: un pedido inicial
+    document.addEventListener("DOMContentLoaded", () => {
+      addOrder({
+        code: "001",
+        quantity: 1,
+        product: "T-shirt &gt; WEISSACH QUIET",
+        shortName: "T-shirt\nQuiet",
+        design: "Caja (Diseño 2)",
+        invoiceNumber: "FAC-001",
+        invoiceUrl: "#",
+        boxUrl: "./caja/blanco.pdf",
+        orderDate: "01/11/25",
+        deliveryDate: "05/11/25",
+        status: "Terminado",
+      });
+       addOrder({
+        code: "002",
+        quantity: 1,
+        product: "T-shirt &gt; WEISSACH QUIET",
+        shortName: "T-shirt\nQuiet",
+        design: "Caja (Diseño 3)",
+        invoiceNumber: "FAC-001",
+        invoiceUrl: "#",
+        boxUrl: "./caja/negro.pdf",
+        orderDate: "01/11/25",
+        deliveryDate: "05/11/25",
+        status: "Terminado",
+      });
+ 
+
+      // Búsqueda en tiempo real
+      document
+        .getElementById("ordersSearch")
+        .addEventListener("input", renderOrders);
+    });
+
+    // Cuando tengas pedidos desde un backend,
+    // solo llama a addOrder({ ...datosDelPedido })
+    // y quedará registrado en Pedidos + Historial.
+  </script>
+</body>
+</html>

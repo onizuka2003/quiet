@@ -286,30 +286,40 @@
   const pass  = $('#password').value;
 
   // --- CREDENCIALES ESTÁTICAS QUE TÚ DECIDES ---
-  const ADMIN_EMAIL = 'hola@quiet.local'; // cámbialo si quieres
-  const ADMIN_PASS  = '123';                       // cámbialo si quieres
+  // Cuenta 1: administrador
+const ADMIN_EMAIL = 'admin@quiet.local';
+const ADMIN_PASS  = '123';
+const ADMIN_PAGE  = 'interfaz-admin.html';
 
-  // Comprobamos si coinciden
-  const esAdmin = (email === ADMIN_EMAIL && pass === ADMIN_PASS);
-  // Si prefieres solo que contenga la palabra "administrador":
-  // const esAdmin = (email.includes('administrador') && pass === ADMIN_PASS);
+// Cuenta 2: usuario normal (por ejemplo)
+const USER_EMAIL = 'user@quiet.local';
+const USER_PASS  = '123';
+const USER_PAGE  = '../imprenta/sistema de impresion.html';                       // cámbialo si quieres
 
-  if (esAdmin) {
-    // Login correcto
-    okMsg.textContent = 'Inicio de sesión correcto. Redirigiendo...';
-    okMsg.style.display = 'block';
+  let target = null;
 
-    // === AQUÍ PONES TU OTRO INDEX ===
-    const TARGET_PAGE = 'interfaz.html'; // por ejemplo: 'index-admin.html'
+// ¿Es el admin?
+if (email === ADMIN_EMAIL && pass === ADMIN_PASS) {
+  target = ADMIN_PAGE;
+}
+// ¿Es el otro usuario?
+else if (email === USER_EMAIL && pass === USER_PASS) {
+  target = USER_PAGE;
+}
 
-    setTimeout(() => {
-      window.location.href = TARGET_PAGE;
-    }, 600); // pequeño delay para que se vea el mensaje
-  } else {
-    // Login incorrecto
-    errMsg.textContent = 'Usuario o contraseña incorrectos.';
-    errMsg.style.display = 'block';
-  }
+// Si encontramos a dónde ir:
+if (target) {
+  okMsg.textContent = 'Inicio de sesión correcto. Redirigiendo...';
+  okMsg.style.display = 'block';
+
+  setTimeout(() => {
+    window.location.href = target;
+  }, 600);
+} else {
+  // Ninguna cuenta coincidió
+  errMsg.textContent = 'Usuario o contraseña incorrectos.';
+  errMsg.style.display = 'block';
+}
 });
   </script>
 </body>
