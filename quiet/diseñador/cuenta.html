@@ -18,6 +18,10 @@
       --radius:12px;
       --shadow:0 6px 18px rgba(0,0,0,.08);
       --container:1100px;
+      
+    }
+    .tituloprincipal{
+      font-family: 'Montserrat', sans-serif;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -40,7 +44,7 @@
       display:flex; gap:10px; align-items:center; font-weight:700; letter-spacing:.5px; font-size:24px;
     }
     .logo-mark{
-      width:60px; height:60px; border:2px solid #fff; border-radius:50%; display:grid; place-items:center;
+      width:60px; height:60px; border-radius:50%; display:grid; place-items:center;
     }
     .search{
       display:flex; align-items:center; background:#fff; border-radius:999px; padding:6px 12px; min-width:260px;
@@ -149,7 +153,7 @@
       <div class="logo">
         <span class="logo-mark">
           <img src="../imagenes pagina/logo-1069215491-1750714996-dfd41da1eb6c985d433a6fb66698a4701750714996-640-0.png" alt="Logo" width="50" height="65" />
-        </span> QUIET
+        </span> <p class="tituloprincipal">QUIET</p> 
       </div>
 
       <label class="search" aria-label="Buscar">
@@ -199,7 +203,7 @@
           <label class="label" for="password">Contraseña</label>
           <div class="control">
             <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••" minlength="3" required />
-            <button type="button" class="toggle-eye" aria-label="Mostrar u ocultar contraseña" title="Mostrar/ocultar" > <img src="eye.png" alt="3">
+            <button type="button" class="toggle-eye" aria-label="Mostrar u ocultar contraseña" title="Mostrar/ocultar" > 
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C7 5 2.73 8.11 1 12c1.73 3.89 6 7 11 7s9.27-3.11 11-7c-1.73-3.89-6-7-11-7zm0 12a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
             </button>
           </div>
@@ -272,46 +276,41 @@
     const errMsg = $('#msg-err');
 
     form.addEventListener('submit', (e) => {
-      e.preventDefault();
+  e.preventDefault();
 
-      errMsg.style.display = 'none';
-      okMsg.style.display = 'none';
+  // Ocultamos mensajes anteriores
+  errMsg.style.display = 'none';
+  okMsg.style.display  = 'none';
 
-      const email = $('#email').value.trim();
-      const pass  = $('#password').value;
+  const email = $('#email').value.trim();
+  const pass  = $('#password').value;
 
-      // Validación mínima del lado del cliente
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      const passOk  = pass.length >= 3;
+  // --- CREDENCIALES ESTÁTICAS QUE TÚ DECIDES ---
+  const ADMIN_EMAIL = 'hola@quiet.local'; // cámbialo si quieres
+  const ADMIN_PASS  = '123';                       // cámbialo si quieres
 
-      if (!emailOk || !passOk) {
-        errMsg.textContent = 'Revisa el correo y la contraseña.';
-        errMsg.style.display = 'block';
-        return;
-      }
+  // Comprobamos si coinciden
+  const esAdmin = (email === ADMIN_EMAIL && pass === ADMIN_PASS);
+  // Si prefieres solo que contenga la palabra "administrador":
+  // const esAdmin = (email.includes('administrador') && pass === ADMIN_PASS);
 
-      // Aquí normalmente harías un fetch() al servidor
-      // fetch('/api/login', {method:'POST', body: new FormData(form)})
+  if (esAdmin) {
+    // Login correcto
+    okMsg.textContent = 'Inicio de sesión correcto. Redirigiendo...';
+    okMsg.style.display = 'block';
 
-      // DEMO de éxito:
-      okMsg.style.display = 'block';
+    // === AQUÍ PONES TU OTRO INDEX ===
+    const TARGET_PAGE = 'interfaz.html'; // por ejemplo: 'index-admin.html'
 
-      // --- Redirección DEMO ---
-      // Cambia esta ruta por la de tu otro index cuando quieras probar:
-      // const TARGET_PAGE = '/tu-otro-index.html';
-      // setTimeout(() => window.location.href = TARGET_PAGE, 600);
-    });
-
-    // --------- OPCIONAL: Prefill y redirección inmediata (descomenta para probar) ----------
-    // window.addEventListener('DOMContentLoaded', () => {
-    //   $('#email').value = 'administrador@quiet.local';
-    //   $('#password').value = '123';
-    //   // Si quieres que al dar clic en "INICIAR SESIÓN" no haga POST real:
-    //   form.addEventListener('submit', (ev) => {
-    //     ev.preventDefault();
-    //     window.location.replace('/tu-otro-index.html');
-    //   }, {once:true});
-    // });
+    setTimeout(() => {
+      window.location.href = TARGET_PAGE;
+    }, 600); // pequeño delay para que se vea el mensaje
+  } else {
+    // Login incorrecto
+    errMsg.textContent = 'Usuario o contraseña incorrectos.';
+    errMsg.style.display = 'block';
+  }
+});
   </script>
 </body>
 </html>

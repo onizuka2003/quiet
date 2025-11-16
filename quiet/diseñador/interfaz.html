@@ -10,7 +10,7 @@
       --card:#ffffff;
       --muted:#6b7280;
       --text:#0f172a;
-      --brand:#111827;
+      --brand:#000000;
       --accent:#111827;
       --ring:#11182733;
       --ok:#059669;
@@ -26,7 +26,9 @@
     /* Topbar */
     .topbar{background:var(--brand);color:#fff;padding:14px 0}
     .topbar-inner{max-width:1200px;margin:0 auto;display:flex;gap:16px;align-items:center;padding:0 24px}
-    .logo{width:28px;height:28px;border:2px solid #fff;border-radius:50%;display:grid;place-items:center;font-weight:700}
+    /* Logo: aumentar contenedor y ajustar la imagen para que no quede "caído" */
+    .logo{width:40px;height:40px;display:grid;place-items:center;font-weight:700;align-self:center}
+    .logo img{max-height:100%;width:auto;display:block;transform:translateY(-4px);}
     .search{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:8px 14px;box-shadow:0 0 0 2px transparent}
     .search input{border:0;outline:0;flex:1;font-size:14px}
     .menu{display:flex;gap:20px;align-items:center}
@@ -60,7 +62,7 @@
     .file .meta{font-size:12px;color:var(--muted)}
     .file .actions{margin-left:auto;display:flex;gap:8px}
     .btn{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:6px 10px;font-size:12px;cursor:pointer}
-    .btn.primary{background:#111827;color:#fff;border-color:#111827}
+    .btn.primary{background:#afb3ba;color:#fff;border-color:#000000}
     .btn.danger{border-color:#fecaca;color:#991b1b;background:#fff5f5}
 
     /* Side panel */
@@ -76,8 +78,8 @@
     @media (max-width: 1100px){.cards{grid-template-columns:repeat(3,1fr)}}
     @media (max-width: 720px){.cards{grid-template-columns:repeat(2,1fr)}}
     .card-item{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:8px}
-    .thumb{aspect-ratio:4/3;background:#f3f4f6;border:1px dashed #e5e7eb;border-radius:10px;display:grid;place-items:center;overflow:hidden}
-    .thumb img{max-width:100%;max-height:100%;display:block}
+    .thumb{aspect-ratio:auto;min-height:180px;background:#f3f4f6;border:1px dashed #e5e7eb;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:12px}
+    .thumb img{max-width:100%;max-height:100%;display:block;object-fit:contain;width:100%;height:auto}
     .item-actions{display:flex;justify-content:center;gap:10px}
     .icon-btn{border:0;background:#eef2ff;border-radius:999px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
     .icon-btn.danger{background:#fff5f5;border:1px solid #fecaca}
@@ -93,7 +95,7 @@
 <body>
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="logo" title="Quiet">x</div>
+      <div class="logo" title="Quiet"><img src="../imagenes pagina/logo-1069215491-1750714996-dfd41da1eb6c985d433a6fb66698a4701750714996-640-0.png" alt="Logo" width="40" height="50" /></div>
       <div class="search" role="search">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="#111827" stroke-width="1.8"/></svg>
         <input placeholder="¿Qué estás buscando?" aria-label="Buscar" />
@@ -120,7 +122,11 @@
           </div>
           <div id="dropzone" class="dropzone" aria-label="Área para arrastrar y soltar">
             <div class="dz-inner">
-              <div class="dz-icon">⬇️</div>
+              <div class="dz-icon"><svg  xmlns="http://www.w3.org/2000/svg" width="40" height="40"  
+fill="currentColor" viewBox="0 0 24 24" >
+<!--Boxicons v3.0.3 https://boxicons.com | License  https://docs.boxicons.com/free-->
+<path d="M13 10h-2v3H8v2h3v3h2v-3h3v-2h-3z"></path><path d="m19.94 7.68-.03-.09a.8.8 0 0 0-.2-.29l-5-5c-.09-.09-.19-.15-.29-.2l-.09-.03a.8.8 0 0 0-.26-.05c-.02 0-.04-.01-.06-.01H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-12s-.01-.04-.01-.06c0-.09-.02-.17-.05-.26ZM6 20V4h7v4c0 .55.45 1 1 1h4v11z"></path>
+</svg></div>
               <div class="dz-text">
                 Puede arrastrar y soltar archivos aquí para añadirlos
                 <small>Solo se aceptan PDFs. También puede hacer clic en "Seleccionar archivo".</small>
@@ -190,10 +196,10 @@
 
     // --- Mock de base de datos de diseños actuales ---
     const MOCK_ACTUALES = [
-      {id:'BOL-001', nombre:'Bolsa ST 14×20 · Negro', tipo:'Básico',  version:'1.3', fecha:'2025-09-12'},
-      {id:'BOL-002', nombre:'Bolsa Doypack 12×18 · Mate', tipo:'Básico',  version:'2.1', fecha:'2025-10-01'},
-      {id:'CAJ-101', nombre:'Caja premium 25×18×6 · Kraft', tipo:'Premium', version:'0.9', fecha:'2025-09-28'},
-      {id:'CAJ-102', nombre:'Caja premium 30×20×10 · Blanco', tipo:'Premium', version:'1.0', fecha:'2025-10-22'}
+      {id:'BOL-001', nombre:'Bolsa ST 14×20 · Negro', tipo:'Básico', version:'1.3', fecha:'2025-09-12', img:'../usuario/imagenes/empaque basico/negro.png'},
+      {id:'BOL-002', nombre:'Bolsa Doypack 12×18 · Mate', tipo:'Básico', version:'2.1', fecha:'2025-10-01', img:'../usuario/imagenes/empaque basico/blanco.png'},
+      {id:'CAJ-101', nombre:'Caja premium 25×18×6 · Kraft', tipo:'Premium', version:'0.9', fecha:'2025-09-28', img:'../usuario/imagenes/premiun/Captura de pantalla 2025-09-22 183344.png'},
+      {id:'CAJ-102', nombre:'Caja premium 30×20×10 · Blanco', tipo:'Premium', version:'1.0', fecha:'2025-10-22', img:'../usuario/imagenes/premiun/Captura de pantalla 2025-09-22 185432.png'}
     ];
 
     // --- Persistencia local para "Archivos subidos" ---
@@ -378,12 +384,18 @@
       cardsActuales.innerHTML = rows.map(r => `
         <div class='card-item' data-id='${r.id}'>
           <div class='thumb'>
-            <img src='${logoPlaceholder(r.id)}' alt='Logo ${r.nombre}' title='Descargar instrucciones (PDF)' data-action='download-instrucciones'/>
+            <img src='${r.img}' alt='${r.nombre}' title='${r.nombre}' data-action='download-instrucciones' onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22225%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%23e5e7eb%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2216%22 fill=%22%23999%22 font-family=%22system-ui%22%3E${r.id}%3C/text%3E%3C/svg%3E'"/>
           </div>
           <div class='item-actions'>
-            <button class='icon-btn' title='Descargar instrucciones' data-action='download-instrucciones'>👁️</button>
-            <button class='icon-btn' title='Descargar planos' data-action='download-planos'>📄</button>
-            <button class='icon-btn danger' title='Quitar del sistema' data-action='remove'>✖</button>
+            <button class='icon-btn' title='Ver' data-action='download-instrucciones'> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+<path d="M12 9a3 3 0 1 0 0 6 3 3 0 1 0 0-6"></path><path d="M12 19c7.63 0 9.93-6.62 9.95-6.68.07-.21.07-.43 0-.63-.02-.07-2.32-6.68-9.95-6.68s-9.93 6.61-9.95 6.67c-.07.21-.07.43 0 .63.02.07 2.32 6.68 9.95 6.68Zm0-12c5.35 0 7.42 3.85 7.93 5-.5 1.16-2.58 5-7.93 5s-7.42-3.84-7.93-5c.5-1.16 2.58-5 7.93-5"></path>
+</svg> 
+</button>
+            <button class='icon-btn' title='Eliminar' data-action='download-planos'><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#f20000" viewBox="0 0 24 24">
+<path d="m7.76 14.83-2.83 2.83 1.41 1.41 2.83-2.83 2.12-2.12.71-.71.71.71 1.41 1.42 3.54 3.53 1.41-1.41-3.53-3.54-1.42-1.41-.71-.71 5.66-5.66-1.41-1.41L12 10.59 6.34 4.93 4.93 6.34 10.59 12l-.71.71z"></path>
+</svg>
+</button>
+            
           </div>
         </div>
       `).join('');
